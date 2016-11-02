@@ -6,7 +6,7 @@
   const debug = require('debug')('herman-express:server');
   const http = require('http');
 
-  const port = normalizePort('3333');
+  const port = normalizePort('3000');
   app.set('port', port);
 
   const server = http.createServer(app);

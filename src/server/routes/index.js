@@ -34,4 +34,21 @@ router.get('/test', (req, res, next) => {
   });
 });
 
+router.post('/game', (req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  const newGame = {
+    name: req.body.name
+  };
+  db.any(`INSERT INTO games (name, status) VALUES('${newGame.name}', true,)`)
+  .then((result) => {
+    res.json(result).status(200);
+    })
+  .catch((error) => {
+    next(error);
+  });
+});
+
+
 module.exports = router;
