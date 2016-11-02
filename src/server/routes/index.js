@@ -16,4 +16,22 @@ router.get('/', function (req, res, next) {
   });
 });
 
+
+router.get('/test', (req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  const renderObject = {};
+  renderObject.title = 'Games';
+  db.any('SELECT * FROM games')
+  .then((results) => {
+    renderObject.authors = results;
+    //res.render('authors.html', renderObject);
+    res.json(renderObject).status(200);
+  })
+  .catch((error) => {
+    next(error);
+  });
+});
+
 module.exports = router;

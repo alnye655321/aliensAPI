@@ -108,7 +108,7 @@ router.post('/', (req, res, next) => {
         });
 });
 
-//http --json PUT http://localhost:3000/api/v1/books/21 title=Alec genre=somethinCool cover=somethinCool description=notWorthit
+//http --json PUT http://immense-mountain-80924.herokuapp.com/api/v1/books/21 title=Alec genre=somethinCool cover=somethinCool description=notWorthit
 router.put('/:id', (req, res, next) => {
   const bookID = parseInt(req.params.id);
   const updateBook = {
