@@ -22,3 +22,5 @@ CREATE TABLE players (
  lonEnd double precision,
  game_id INTEGER
 );
+
+INSERT INTO games (name, status) VALUES ('Test Game1',true);
