@@ -13,15 +13,12 @@ CREATE TABLE players (
  ID SERIAL PRIMARY KEY,
  handle VARCHAR,
  tagline VARCHAR,
- human BOOLEAN
- lat DECIMAL,
- lon DECIMAL,
- latStart DECIMAL,
- lonStart DECIMAL,
- latEnd DECIMAL,
- lonEnd DECIMAL,
+ human BOOLEAN,
+ lat double precision,
+ lon double precision,
+ latStart double precision,
+ lonStart double precision,
+ latEnd double precision,
+ lonEnd double precision,
  game_id INTEGER
 );
-
-
-INSERT INTO games (name, status) VALUES ('Test Game1',true);
