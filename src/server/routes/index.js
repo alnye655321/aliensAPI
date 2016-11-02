@@ -33,7 +33,7 @@ router.get('/test', (req, res, next) => {
     next(error);
   });
 });
-
+//http -f POST http://node.nyedigital.com/game name=test
 router.post('/game', (req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
