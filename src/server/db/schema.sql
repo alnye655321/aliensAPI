@@ -6,7 +6,12 @@ CREATE DATABASE aliens;
 CREATE TABLE games (
  ID SERIAL PRIMARY KEY,
  name VARCHAR,
- status BOOLEAN
+ status BOOLEAN,
+ gametime INTEGER,
+ players INTEGER,
+ location VARCHAR,
+ latStart double precision,
+ lonStart double precision
 );
 
 CREATE TABLE players (
