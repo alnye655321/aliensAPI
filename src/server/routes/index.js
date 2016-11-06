@@ -38,6 +38,9 @@ router.post('/game', (req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
   res.header('Access-Control-Allow-Headers', 'Content-Type');
+  console.log(req);
+  console.log('xxx-xxx-xxx');
+  console.log(req.body);
   const newGame = {
     name: req.body.name
   };
