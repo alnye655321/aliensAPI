@@ -45,10 +45,10 @@ router.post('/game', (req, res, next) => {
     handle: req.body.handle,
     tagline: req.body.tagline
   };
-  db.any(`INSERT INTO games (name, status) VALUES('${newGame.name}', 'true')  returning ID`)
+  db.any(`INSERT INTO games (name, status) VALUES('${newGame.name}', 'true')  returning id`)
   .then((result) => {
-    var gameId = result.ID;
-    db.any(`INSERT INTO players (handle, tagline, game_id) VALUES('${newPlayer.handle}', '${newPlayer.tagline}',${gameId})  returning ID`)
+    var gameId = result.id;
+    db.any(`INSERT INTO players (handle, tagline, game_id) VALUES('${newPlayer.handle}', '${newPlayer.tagline}',${gameId})  returning id`)
       .then((result) => {
         res.json(result).status(200);
         })
