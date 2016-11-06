@@ -29,3 +29,8 @@ CREATE TABLE players (
 );
 
 INSERT INTO games (name, status) VALUES ('Test Game1',true);
+
+INSERT INTO players (handle, tagline, human,lat,lon,latStart,lonStart) VALUES ('alnye','my life for hire', false, 39.68214, -104.98421, 39.68214, -104.98421);
+INSERT INTO players (handle, tagline, human,lat,lon,latStart,lonStart) VALUES ('bond','shakin not stirred', false, 39.69287, -104.95425, 39.69287, -104.95425);
+
+-- update players set game_id = 2 where id = 1  or id =2;
