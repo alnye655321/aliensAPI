@@ -84,7 +84,7 @@ router.post('/game', (req, res, next) => {
   });
 });
 
-//running continiously ---------------------------------------------------------
+//human running continiously ---------------------------------------------------
 //http://0.0.0.0:3000/update/human
 router.post('/update/human', (req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
@@ -163,12 +163,7 @@ router.post('/update/human', (req, res, next) => {
       next(error);
     });
   } //end run updates after error checking
-});// end post -----------------------------------------------------------------
-
-//In the above then (else) returning alien player locations - then feed this into java distance check
-
-//close
-
+});//end human running continiously --------------------------------------------
 
 
 
