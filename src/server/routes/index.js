@@ -51,7 +51,7 @@ router.post('/game', (req, res, next) => {
     console.log(result[0]);
     db.any("INSERT INTO players(handle, tagline, game_id) values($1, $2, $3) returning id", [newPlayer.handle, newPlayer.tagline, gameId])
       .then((result) => {
-        res.json(result).status(200);
+        res.json(result[0]).status(200);
         })
       .catch((error) => {
         next(error);
