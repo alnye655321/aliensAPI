@@ -38,15 +38,23 @@ router.post('/game', (req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
   res.header('Access-Control-Allow-Headers', 'Content-Type');
-  console.log(req);
-  console.log('xxx-xxx-xxx');
-  console.log(req.body);
   const newGame = {
     name: req.body.name
   };
-  db.any(`INSERT INTO games (name, status) VALUES('${newGame.name}', 'true')`)
+  const newPlayer = {
+    handle: req.body.handle,
+    tagline: req.body.tagline
+  };
+  db.any(`INSERT INTO games (name, status) VALUES('${newGame.name}', 'true')  returning ID`)
   .then((result) => {
-    res.json(result).status(200);
+    var gameId = result.ID;
+    db.any(`INSERT INTO players (handle, tagline, game_id) VALUES('${newPlayer.handle}', '${newPlayer.tagline}',${gameId})  returning ID`)
+      .then((result) => {
+        res.json(result).status(200);
+        })
+      .catch((error) => {
+        next(error);
+      });
     })
   .catch((error) => {
     next(error);
