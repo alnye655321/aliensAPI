@@ -4,7 +4,7 @@ CREATE DATABASE aliens;
 \c aliens;
 
 CREATE TABLE games (
- ID SERIAL PRIMARY KEY,
+ id SERIAL PRIMARY KEY,
  name VARCHAR,
  status BOOLEAN,
  gametime INTEGER,
@@ -15,7 +15,7 @@ CREATE TABLE games (
 );
 
 CREATE TABLE players (
- ID SERIAL PRIMARY KEY,
+ id SERIAL PRIMARY KEY,
  handle VARCHAR,
  tagline VARCHAR,
  human BOOLEAN,

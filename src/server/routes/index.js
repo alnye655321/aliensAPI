@@ -49,7 +49,7 @@ router.post('/game', (req, res, next) => {
   .then((result) => {
     var gameId = result[0].id;
     console.log(result[0]);
-    db.any("INSERT INTO players(handle, tagline, game_id) values($1, $2, $3) returning id", [newPlayer.handle, newPlayer.tagline, gameId])
+    db.any("INSERT INTO players(handle, tagline, game_id, human) values($1, $2, $3, $4) returning id", [newPlayer.handle, newPlayer.tagline, gameId, "true"])
       .then((result) => {
         res.json(result[0]).status(200);
         })
@@ -62,21 +62,78 @@ router.post('/game', (req, res, next) => {
   });
 });
 
-router.post('/player', (req, res, next) => {
+//running continiously
+router.post('/update/human', (req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
   res.header('Access-Control-Allow-Headers', 'Content-Type');
-  const newGame = {
-    name: req.body.name
+
+  var responseMsg = {};
+
+  const humanUpdate = {
+    id: req.body.id,
+    lat: req.body.lat,
+    lon: req.body.lon,
+    checkStart: req.body.checkStart,
+    gameId: req.body.gameId
   };
-  db.any(`INSERT INTO games (handle, tagline, human, latStart, lonS) VALUES('${newGame.name}', 'true')`)
-  .then((result) => {
-    res.json(result).status(200);
+
+  if (humanUpdate.checkStart === "true") { // run this once for initial starting position
+    db.tx(t=> {
+        return t.batch([
+            t.any("UPDATE players SET latStart = $1 WHERE id = $2", [humanUpdate.lat, humanUpdate.id]),
+            t.any("UPDATE players SET lonStart = $1 WHERE id = $2", [humanUpdate.lon, humanUpdate.id])
+        ]);
+      })
+    .then(result=> {
+      if (!result.length) {
+        res.status(404).send({
+          status: 'error',
+          message: 'That player doesn\'t exist'
+        });
+      } else {
+        responseMsg.startStatus = 'complete'; // will listen in app for sucess, then start passing checkStart = false
+      }
     })
+    .catch((error) => {
+      next(error);
+    });
+  } // end initial starting postion
+
+  db.tx(t=> { // run this every time
+      return t.batch([
+          t.any("UPDATE players SET lat = $1 WHERE id = $2", [humanUpdate.lat, humanUpdate.id]),
+          t.any("UPDATE players SET lon = $1 WHERE id = $2", [humanUpdate.lon, humanUpdate.id])
+      ]);
+    })
+  .then(result=> {
+    if (!result.length) {
+      res.status(404).send({
+        status: 'error',
+        message: 'That player doesn\'t exist'
+      });
+    } else {
+      responseMsg.updateStatus = 'complete';
+      res.json(responseMsg).status(200);
+    }
+  })
   .catch((error) => {
     next(error);
   });
 });
+
+//In the above then (else) returning alien player locations - then feed this into java distance check
+// db.any("SELECT * FROM players WHERE game_id = $1", [humanUpdate.gameId])
+// .then((results) => {
+//   console.log(results);
+//   responseMsg.aliens = results;
+//   //res.render('authors.html', renderObject);
+//   res.json(responseMsg).status(200);
+// })
+// .catch((error) => {
+//   next(error);
+// });
+//close
 
 
 module.exports = router;
