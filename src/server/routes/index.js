@@ -48,7 +48,7 @@ router.post('/game', (req, res, next) => {
   db.any(`INSERT INTO games (name, status) VALUES('${newGame.name}', 'true')  returning id`)
   .then((result) => {
     var gameId = result.id;
-    db.any(`INSERT INTO games (name, status) VALUES('${newGame.name}', 'true')  returning id`)
+    db.any("INSERT INTO players(handle, tagline, game_id) values($1, $2, $3) returning id", [newPlayer.handle, newPlayer.tagline, gameId])
       .then((result) => {
         res.json(result).status(200);
         })
