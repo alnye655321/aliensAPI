@@ -57,7 +57,7 @@ router.post('/player', (req, res, next) => {
   const newGame = {
     name: req.body.name
   };
-  db.any(`INSERT INTO games (handle, tagline, human, latStart, lonStart) VALUES('${newGame.name}', 'true')`)
+  db.any(`INSERT INTO games (handle, tagline, human, latStart, lonS) VALUES('${newGame.name}', 'true')`)
   .then((result) => {
     res.json(result).status(200);
     })
