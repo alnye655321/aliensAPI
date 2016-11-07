@@ -94,11 +94,11 @@ router.post('/update/human', (req, res, next) => {
   var responseMsg = {};
 
   const humanUpdate = {
-    id: req.body.id,
-    lat: req.body.lat,
-    lon: req.body.lon,
+    id: parseInt(req.body.id),
+    lat: parseFloat(req.body.lat),
+    lon: parseFloat(req.body.lon),
     checkStart: req.body.checkStart,
-    gameId: req.body.gameId
+    gameId: parseInt(req.body.gameId)
   };
 
   //validate gps coordinates
