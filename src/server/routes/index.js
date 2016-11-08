@@ -158,14 +158,12 @@ router.post('/update/human', (req, res, next) => {
 
 // get aliens info - running continously for host-------------------------------
 //http://node.nyedigital.com/aliens
-router.post('/aliens', (req, res, next) => {
+router.get('/aliens/:id', (req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
   res.header('Access-Control-Allow-Headers', 'Content-Type');
-	const aliensReq = {
-		gameId: parseInt(req.body.gameId)
-	};
-  db.any("SELECT * FROM players WHERE game_id = $1 AND human = false", [aliensReq.gameId])
+	const gameID = parseInt(req.params.id);
+  db.any("SELECT * FROM players WHERE game_id = $1 AND human = false", [gameID])
 	.then((results) => {
 		console.log(results);
 		res.json(results).status(200);
