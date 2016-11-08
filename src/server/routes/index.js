@@ -164,8 +164,7 @@ router.post('/aliens', (req, res, next) => {
 	const aliensReq = {
 		gameId: parseInt(req.body.gameId)
 	};
-  renderObject.title = 'Games';
-	db.any("SELECT * FROM players WHERE game_id = $1 AND human = false", [aliensReq.gameId])
+  db.any("SELECT * FROM players WHERE game_id = $1 AND human = false", [aliensReq.gameId])
 	.then((results) => {
 		console.log(results);
 		res.json(results).status(200);
