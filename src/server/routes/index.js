@@ -84,7 +84,7 @@ router.post('/game', (req, res, next) => {
   });
 });
 
-//human running continiously ---------------------------------------------------
+//human running continiously for host ------------------------------------------
 //http://0.0.0.0:3000/update/human
 router.post('/update/human', (req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
@@ -147,23 +147,33 @@ router.post('/update/human', (req, res, next) => {
       }
       else {
         responseMsg.updateStatus = 'complete';
-
-        db.any("SELECT * FROM players WHERE game_id = $1 AND human = false", [humanUpdate.gameId])
-        .then((results) => {
-          console.log(results);
-          responseMsg.aliens = results;
-          res.json(responseMsg).status(200);
-        })
-        .catch((error) => {
-          next(error);
-        });
+				res.json(responseMsg).status(200);
       }
     })
     .catch((error) => {
       next(error);
     });
   } //end run updates after error checking
-});//end human running continiously --------------------------------------------
+});//end human running continiously for host -----------------------------------
+
+// get aliens info - running continously for host-------------------------------
+router.post('/aliens', (req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+	const aliensReq = {
+		gameId: parseInt(req.body.gameId)
+	};
+  renderObject.title = 'Games';
+	db.any("SELECT * FROM players WHERE game_id = $1 AND human = false", [aliensReq.gameId])
+	.then((results) => {
+		console.log(results);
+		res.json(results).status(200);
+	})
+	.catch((error) => {
+		next(error);
+	});
+});// end get aliens info - running continously for host------------------------
 
 
 
