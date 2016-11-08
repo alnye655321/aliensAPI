@@ -157,6 +157,7 @@ router.post('/update/human', (req, res, next) => {
 });//end human running continiously for host -----------------------------------
 
 // get aliens info - running continously for host-------------------------------
+//http://node.nyedigital.com/aliens
 router.post('/aliens', (req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
