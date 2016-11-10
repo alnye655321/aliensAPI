@@ -156,6 +156,103 @@ router.post('/update/human', (req, res, next) => {
   } //end run updates after error checking
 });//end human running continiously for host -----------------------------------
 
+//alien player create-----------------------------------------------------------
+router.post('/alien', (req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  //create new alien and attach game ID
+  const newPlayer = {
+    handle: req.body.handle,
+    tagline: req.body.tagline,
+		gameId: parseInt(req.body.gameId)
+  };
+	db.any("INSERT INTO players(handle, tagline, game_id, human) values($1, $2, $3, $4) returning id", [newPlayer.handle, newPlayer.tagline, newPlayer.gameId, "false"])
+		.then((result) => {
+			//gameResponse.playerId = result[0].id;
+			res.json(result[0].id).status(200);
+			})
+		.catch((error) => {
+			next(error);
+		});
+});
+//close alien player create-----------------------------------------------------
+
+//alien running continiously----------------------------------------------------
+//http://0.0.0.0:3000/update/alien
+router.post('/update/alien', (req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+
+  var responseMsg = {};
+
+  const alienUpdate = {
+    id: parseInt(req.body.id),
+    lat: parseFloat(req.body.lat),
+    lon: parseFloat(req.body.lon),
+    checkStart: req.body.checkStart,
+    gameId: parseInt(req.body.gameId),
+		handle: req.body.handle,
+		tagline: req.body.handle
+  };
+
+  //validate gps coordinates
+  if ( checkLat(alienUpdate.lat) === false || checkLon(alienUpdate.lon) === false ) {
+    res.json({
+      status: 'error',
+      message: 'Those GPS coordinates are invalid'
+    }).status(404);
+  }
+  //end validate gps coordinates
+  else { //run updates after error checking
+    if (alienUpdate.checkStart === "true") { // run this once for initial starting position
+      db.tx(t=> {
+          return t.batch([
+              t.any("UPDATE players SET latStart = $1 WHERE id = $2", [alienUpdate.lat, alienUpdate.id]),
+              t.any("UPDATE players SET lonStart = $1 WHERE id = $2", [alienUpdate.lon, alienUpdate.id])
+          ]);
+        })
+      .then(result=> {
+        if (!result.length) {
+          res.status(404).send({
+            status: 'error',
+            message: 'That player doesn\'t exist'
+          });
+        } else {
+          responseMsg.startStatus = 'complete'; // will listen in app for sucess, then start passing checkStart = false;
+        }
+      })
+      .catch((error) => {
+        next(error);
+      });
+    } // end initial starting postion
+
+    db.tx(t=> { // run this every time
+        return t.batch([
+            t.any("UPDATE players SET lat = $1 WHERE id = $2", [alienUpdate.lat, alienUpdate.id]),
+            t.any("UPDATE players SET lon = $1 WHERE id = $2", [alienUpdate.lon, alienUpdate.id])
+        ]);
+      })
+    .then(result=> {
+      if (!result.length) {
+        res.status(404).send({
+          status: 'error',
+          message: 'That player doesn\'t exist'
+        });
+      }
+      else {
+        responseMsg.updateStatus = 'complete';
+				res.json(responseMsg).status(200);
+      }
+    })
+    .catch((error) => {
+      next(error);
+    });
+  } //end run updates after error checking
+});//end alien running continiously --------------------------------------------
+
+
 // get aliens info - running continously for host-------------------------------
 //http://node.nyedigital.com/aliens
 router.get('/aliens/:id', (req, res, next) => {
