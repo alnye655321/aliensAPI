@@ -168,7 +168,8 @@ router.post('/alien', (req, res, next) => {
     tagline: req.body.tagline,
 		gameId: parseInt(req.body.gameId)
   };
-	db.any("INSERT INTO players(handle, tagline, game_id, human) values($1, $2, $3, $4) returning id", [newPlayer.handle, newPlayer.tagline, newPlayer.gameId, "false"])
+	//inserting default 0 & 0 values for lat & lon, making sure that java pulls some number to begin. Another solution likely !!!
+	db.any("INSERT INTO players(handle, tagline, game_id, human, lat, lon) values($1, $2, $3, $4, $5, $6) returning id", [newPlayer.handle, newPlayer.tagline, newPlayer.gameId, "false", 0, 0])
 		.then((result) => {
 			resObj.playerId = result[0].id;
 			res.json(resObj).status(200);
