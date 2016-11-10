@@ -162,6 +162,7 @@ router.post('/alien', (req, res, next) => {
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
   res.header('Access-Control-Allow-Headers', 'Content-Type');
   //create new alien and attach game ID
+	var resObj = {};
   const newPlayer = {
     handle: req.body.handle,
     tagline: req.body.tagline,
@@ -169,8 +170,8 @@ router.post('/alien', (req, res, next) => {
   };
 	db.any("INSERT INTO players(handle, tagline, game_id, human) values($1, $2, $3, $4) returning id", [newPlayer.handle, newPlayer.tagline, newPlayer.gameId, "false"])
 		.then((result) => {
-			//gameResponse.playerId = result[0].id;
-			res.json(result[0].id).status(200);
+			resObj.playerId = result[0].id;
+			res.json(resObj).status(200);
 			})
 		.catch((error) => {
 			next(error);
@@ -191,10 +192,7 @@ router.post('/update/alien', (req, res, next) => {
     id: parseInt(req.body.id),
     lat: parseFloat(req.body.lat),
     lon: parseFloat(req.body.lon),
-    checkStart: req.body.checkStart,
-    gameId: parseInt(req.body.gameId),
-		handle: req.body.handle,
-		tagline: req.body.handle
+    checkStart: req.body.checkStart
   };
 
   //validate gps coordinates
@@ -205,6 +203,7 @@ router.post('/update/alien', (req, res, next) => {
     }).status(404);
   }
   //end validate gps coordinates
+	// !!! might have to move update GPS batch into checkStart then()
   else { //run updates after error checking
     if (alienUpdate.checkStart === "true") { // run this once for initial starting position
       db.tx(t=> {
