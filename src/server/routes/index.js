@@ -223,7 +223,7 @@ router.post('/update/alien', (req, res, next) => {
         } else {
           responseMsg.startStatus = 'complete'; // will listen in app for sucess, then start passing checkStart = false;
 
-					db.any("SELECT * FROM players WHERE game_id = $1 AND human = true", [alienUpdate.gameID])
+					db.any("SELECT * FROM players WHERE game_id = $1 AND human = true", [alienUpdate.gameId])
 					.then((results) => {
 						console.log(results);
 						responseMsg.humanLat = results.lat;
