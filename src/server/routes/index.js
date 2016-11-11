@@ -194,7 +194,7 @@ router.post('/update/alien', (req, res, next) => {
     lat: parseFloat(req.body.lat),
     lon: parseFloat(req.body.lon),
     checkStart: req.body.checkStart,
-		gameId: req.body.gameId
+		gameId: parseInt(req.body.gameId)
   };
 
   //validate gps coordinates
@@ -222,34 +222,13 @@ router.post('/update/alien', (req, res, next) => {
           });
         } else {
           responseMsg.startStatus = 'complete'; // will listen in app for sucess, then start passing checkStart = false;
-					db.any("SELECT * FROM players WHERE game_id = $1 AND human = true", [alienUpdate.gameID]) //get human/host lat/lon to return for distance checking
+
+					db.any("SELECT * FROM players WHERE game_id = $1 AND human = true", [alienUpdate.gameID])
 					.then((results) => {
 						console.log(results);
-						responseMsg.humanLatStatus = results.lat;
-						responseMsg.humanLonStatus = results.lon;
-
-						db.tx(t=> { // run this every time
-								return t.batch([
-										t.any("UPDATE players SET lat = $1 WHERE id = $2", [alienUpdate.lat, alienUpdate.id]),
-										t.any("UPDATE players SET lon = $1 WHERE id = $2", [alienUpdate.lon, alienUpdate.id])
-								]);
-							})
-						.then(result=> {
-							if (!result.length) {
-								res.status(404).send({
-									status: 'error',
-									message: 'That player doesn\'t exist'
-								});
-							}
-							else {
-								responseMsg.updateStatus = 'complete';
-								res.json(responseMsg).status(200);
-							}
-						})
-						.catch((error) => {
-							next(error);
-						});
-					})//close then, get human/host lat/lon
+						responseMsg.humanLat = results.lat;
+						responseMsg.humanLon = results.lon;
+					})
 					.catch((error) => {
 						next(error);
 					});
@@ -259,6 +238,28 @@ router.post('/update/alien', (req, res, next) => {
         next(error);
       });
     } // end initial starting postion
+
+    db.tx(t=> { // run this every time
+        return t.batch([
+            t.any("UPDATE players SET lat = $1 WHERE id = $2", [alienUpdate.lat, alienUpdate.id]),
+            t.any("UPDATE players SET lon = $1 WHERE id = $2", [alienUpdate.lon, alienUpdate.id])
+        ]);
+      })
+    .then(result=> {
+      if (!result.length) {
+        res.status(404).send({
+          status: 'error',
+          message: 'That player doesn\'t exist'
+        });
+      }
+      else {
+        responseMsg.updateStatus = 'complete';
+				res.json(responseMsg).status(200);
+      }
+    })
+    .catch((error) => {
+      next(error);
+    });
   } //end run updates after error checking
 });//end alien running continiously --------------------------------------------
 
