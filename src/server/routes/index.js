@@ -247,7 +247,6 @@ router.post('/update/alien', (req, res, next) => {
 
 				db.any("SELECT * FROM players WHERE game_id = $1 AND human = true", [alienUpdate.gameId]) //get human/host lat/lon to return for distance checking
 				.then((results) => {
-					console.log(results[0]);
 					responseMsg.humanLat = results[0].lat;
 					responseMsg.humanLon = results[0].lon;
 					res.json(responseMsg).status(200);
