@@ -222,16 +222,6 @@ router.post('/update/alien', (req, res, next) => {
           });
         } else {
           responseMsg.startStatus = 'complete'; // will listen in app for sucess, then start passing checkStart = false;
-
-					db.any("SELECT * FROM players WHERE game_id = $1 AND human = true", [alienUpdate.gameId])
-					.then((results) => {
-						console.log(results);
-						responseMsg.humanLat = results.lat;
-						responseMsg.humanLon = results.lon;
-					})
-					.catch((error) => {
-						next(error);
-					});
         }
       })
       .catch((error) => {
@@ -254,7 +244,17 @@ router.post('/update/alien', (req, res, next) => {
       }
       else {
         responseMsg.updateStatus = 'complete';
-				res.json(responseMsg).status(200);
+
+				db.any("SELECT * FROM players WHERE game_id = $1 AND human = true", [alienUpdate.gameId]) //get human/host lat/lon to return for distance checking
+				.then((results) => {
+					console.log(results);
+					responseMsg.humanLat = results.lat;
+					responseMsg.humanLon = results.lon;
+					res.json(responseMsg).status(200);
+				})
+				.catch((error) => {
+					next(error);
+				});
       }
     })
     .catch((error) => {
