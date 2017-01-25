@@ -46,7 +46,6 @@ router.get('/test', (req, res, next) => {
   db.any('SELECT * FROM games')
   .then((results) => {
     renderObject.authors = results;
-    //res.render('authors.html', renderObject);
     res.json(renderObject).status(200);
   })
   .catch((error) => {
@@ -279,8 +278,5 @@ router.get('/aliens/:id', (req, res, next) => {
 		next(error);
 	});
 });// end get aliens info - running continously for host------------------------
-
-
-
 
 module.exports = router;
